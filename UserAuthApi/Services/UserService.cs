@@ -24,7 +24,7 @@ namespace UserAuthApi.Services
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
-            var user = new UserAuthApi.Models.User
+            var user = new User
             {
                 Username = username,
                 PasswordHash = passwordHash

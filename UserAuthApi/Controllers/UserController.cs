@@ -27,6 +27,7 @@ namespace UserAuthApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserCredentials credentials)
         {
+            
             var (success, message) = await _userService.LoginAsync(credentials.Username, credentials.Password);
             if (!success) return Unauthorized(new { message });
 
@@ -40,4 +41,4 @@ namespace UserAuthApi.Controllers
         public string Password { get; set; } = null!;
     }
 }
-}
+

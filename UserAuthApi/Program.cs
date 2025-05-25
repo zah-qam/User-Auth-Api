@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using UserAuthApi.Models;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace UserAuthApi
 {
     public class Program

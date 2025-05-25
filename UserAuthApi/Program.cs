@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using UserAuthApi.Context;
 using UserAuthApi.Services;
 
@@ -10,9 +13,28 @@ namespace UserAuthApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Konfigurera JWT-inställningar
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings["Issuer"],
+                        ValidAudience = jwtSettings["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(key)
+                    };
+                });
+
 
             builder.Services.AddScoped<UserService>();
 
@@ -20,8 +42,8 @@ namespace UserAuthApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<AppDbContext>(options => // Konfigurera DbContext för att använda SQL Server
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+            //builder.Services.AddDbContext<AppDbContext>(options => // Konfigurera DbContext för att använda SQL Server
+            //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
 
             
 
@@ -60,6 +82,7 @@ namespace UserAuthApi
             }
 
             app.UseHttpsRedirection();
+            app.UseAuthentication(); 
 
             app.UseAuthorization();
 

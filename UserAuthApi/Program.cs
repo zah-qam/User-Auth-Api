@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using UserAuthApi.Models;
 
 namespace UserAuthApi
 {
@@ -10,6 +12,10 @@ namespace UserAuthApi
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            builder.Services.AddDbContext<AppDbContext>(options => // Konfigurera DbContext för att använda SQL Server
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

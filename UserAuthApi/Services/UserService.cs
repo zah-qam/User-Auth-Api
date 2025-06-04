@@ -40,7 +40,8 @@ namespace UserAuthApi.Services
             var userExists = await _context.Users.AnyAsync(u => u.Username == username);
             if (userExists)
             {
-                return (false, "Användarnamnet är redan upptaget");
+                // Användarnamnet finns redan, returnera ett felmeddelande utan att avslöja frö mycket.
+                return (false, "Registrering misslyckades. Välj ett annat användarnamn! ");
             }
             
             if (!IsValidPassword(password))
@@ -63,12 +64,15 @@ namespace UserAuthApi.Services
 
         public async Task<(bool Success, string Message)> LoginAsync(string username, string password)
         {
+            // Simulera en inloggning med en fördröjning
+            await Task.Delay(500);
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
+                // Viktigt att inte avslöja om användarnamnet eller lösenordet är felaktigt.
                 return (false, "Felaktigt användarnamn eller lösenord");
             }
-
+            
             return (true, "Inloggning lyckades");
         }
     }
